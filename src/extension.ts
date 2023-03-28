@@ -1,26 +1,51 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import * as request from 'request';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+
 export function activate(context: vscode.ExtensionContext) {
+	let makeRequestDisposable = vscode.commands.registerCommand('authentura-mvp.helloWorld', () => {
+		
+		// Dont do anything if there is no active editor
+		const editor = vscode.window.activeTextEditor;
+		if (!editor) {
+			return;
+		}
+		
+		// Get the currnet text from the editor
+		const document = editor.document;
+		
+		// Ignore plain text and untitled documents
+		if (document.languageId === 'plaintext' || document.isUntitled) {
+			vscode.window.showInformationMessage("Cannot check security of plain text or untitled windows.");
+			return;
+		}
+		
+		const code = document.getText();
+		
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "authentura-mvp" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('authentura-mvp.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from authentura-mvp!');
+		// Make the request to our server
+		request.post({
+			url: "http://localhost:3000/check/3",
+			headers: {
+				"Content-Type": "application/json",
+				"Cookie": "token=e0f25945-becd-4e8d-a372-278b90597fee"
+			},
+			json: {
+				username: "admin",
+				code: code
+			},
+		}, (error: { message: string; }, response: { message: string; }, body: any) => {
+			if (error) {
+				vscode.window.showErrorMessage("Error making API request: " + error.message);
+			}
+			else {
+				vscode.window.showInformationMessage(body);
+			}
+		});
 	});
-
-	context.subscriptions.push(disposable);
+	
+	// Add the command
+	context.subscriptions.push(makeRequestDisposable);
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}
