@@ -2,16 +2,15 @@ import os
 import json
 import openai
 
+
 def setup():
     """ Run some things that are globally needed """
 
     key: str = os.environ.get("OPENAI_KEY")
-    print('key: ',key , type(key))
+    print('key: ', key, type(key))
     assert key is not None, "No openAI api key is present. Please set env 'OPENAI_KEY'"
 
     openai.api_key = key
-
-
 
 
 def get_prompt() -> str:
@@ -26,7 +25,6 @@ def get_prompt() -> str:
         prompt = infile.read()
 
     return prompt.strip("\n")
-
 
 
 def generate_response(prompt, model) -> str:
@@ -61,23 +59,14 @@ def make_request(model: str, code: str):
     for i, line in enumerate(code.split("\n")):
         code_with_numbers += f"{i+1:>5}| {line}\n"
 
-
     # Get prompt
     prompt = get_prompt()
     prompt = prompt.replace("[CODE]", code_with_numbers)
-
 
     # Get response
     response = generate_response(prompt, model)
 
     return response, 200
-
-
-
-
-
-
-
 
 
 # Runs in the beginning of the program

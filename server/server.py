@@ -16,7 +16,7 @@ class CheckCode(Resource):
 
         cookie: str = request.cookies.get("token")
         username: str = request.get_json().get("username")
-        
+
         if not auth.check_cookie(username, cookie):
             return "This method is only available to authenticated users", 403
 
@@ -28,7 +28,6 @@ class CheckCode(Resource):
             return "No code supplied", 400
 
         return api.make_request(model, code)
-
 
 
 class Auth(Resource):
@@ -52,11 +51,6 @@ class Auth(Resource):
         res.set_cookie("token", token)
 
         return res
-
-
-    
-
-
 
 
 restful.add_resource(Auth, "/login")
