@@ -17,9 +17,10 @@
         "command": "authentura-mvp.scan",
         "title": "Authentura MVP: Scan for potential vulnerabilities"
       },
-       {
+      {
         "command": "authentura-mvp.clear",
         "title": "Authentura MVP: Clear potential vulnerabilities"
+      },
       }
     ]
   },

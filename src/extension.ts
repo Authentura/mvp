@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from "vscode";
 import * as request from "request";
 import { parseBody } from "./response";
@@ -12,6 +13,30 @@ export function activate(context: vscode.ExtensionContext) {
     "authentura-mvp.vulnerability-diagnostics"
   );
   context.subscriptions.push(diagnostics);
+
+  let ignoreDiagnosticCommand = vscode.commands.registerCommand(
+    "authentura-mvp.ignoreDiagnostic",
+    ({
+      uri,
+      diagnostic,
+    }: {
+      uri: vscode.Uri;
+      diagnostic: vscode.Diagnostic;
+    }) => {
+      let _diagnostics = diagnostics.get(uri);
+
+      if (!_diagnostics) {
+        return;
+      }
+
+      _diagnostics = _diagnostics.filter((value) => value !== diagnostic);
+      diagnostics.set(uri, _diagnostics);
+    }
+  );
+
+  context.subscriptions.push(
+    ignoreDiagnosticCommand,
+  );
 
   let scanCommand = vscode.commands.registerCommand(
     "authentura-mvp.scan",
@@ -62,16 +87,16 @@ export function activate(context: vscode.ExtensionContext) {
           if (response.issues) {
             const _diagnostics: vscode.Diagnostic[] = [];
 
-            for (let [line, issueTupleList] of response.issues) {
-              const lineText = editor.document.lineAt(line - 1).text;
+            for (let [lineNumber, issueTupleList] of response.issues) {
+              const lineText = editor.document.lineAt(lineNumber - 1).text;
 
               const lineStart = lineText.length - lineText.trimStart().length;
               const lineLength = lineText.length - 1;
 
               const range = new vscode.Range(
-                line - 1,
+                lineNumber - 1,
                 lineStart,
-                line - 1,
+                lineNumber - 1,
                 lineLength
               );
 
@@ -82,9 +107,10 @@ export function activate(context: vscode.ExtensionContext) {
                   vscode.DiagnosticSeverity.Information
                 );
 
-                outputLogger.appendLine(`${issue}\n\n${explanation}`);
+                diagnostic.source = issue;
+                diagnostic.code = "authentura-mvp.vulnerability-diagnostic";
 
-                diagnostic.code = "authentura-mvp.vulnerability-diagnostics";
+
                 _diagnostics.push(diagnostic);
               }
             }
@@ -106,6 +132,68 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(clearCommand);
+
+  context.subscriptions.push(
+    vscode.languages.registerCodeActionsProvider(
+      { scheme: "file" },
+      new VulnerabilityActionsProvider()
+    )
+  );
 }
 
 export function deactivate() {}
+
+export class VulnerabilityActionsProvider implements vscode.CodeActionProvider {
+  provideCodeActions(
+    document: vscode.TextDocument,
+    _range: vscode.Range | vscode.Selection,
+    context: vscode.CodeActionContext
+  ): vscode.ProviderResult<(vscode.CodeAction | vscode.Command)[]> {
+    const diagnostics = context.diagnostics.filter(
+      (item) => item.code === "authentura-mvp.vulnerability-diagnostic"
+    );
+
+    if (diagnostics.length === 0) {
+      return undefined;
+    }
+
+    const actions = [];
+
+    for (let diagnostic of diagnostics) {
+      const temporaryIgnoreTitle = `Ignore "${diagnostic.source}" on line ${
+        diagnostic.range.start.line + 1
+      } for this file`;
+      const permanentlyIgnoreTitle = `Permanently ignore "${
+        diagnostic.source
+      }" on line ${diagnostic.range.start.line + 1} for this file`;
+
+      const temporaryIgnore: vscode.CodeAction = {
+        title: temporaryIgnoreTitle,
+        kind: vscode.CodeActionKind.Empty,
+        diagnostics: [diagnostic],
+        isPreferred: true,
+        command: {
+          title: temporaryIgnoreTitle,
+          command: "authentura-mvp.ignoreDiagnostic",
+          arguments: [{ uri: document.uri, diagnostic }],
+        },
+      };
+
+      const permanentIgnore: vscode.CodeAction = {
+        title: permanentlyIgnoreTitle,
+        kind: vscode.CodeActionKind.Empty,
+        diagnostics: [diagnostic],
+        isPreferred: true,
+        command: {
+          title: permanentlyIgnoreTitle,
+          command: "authentura-mvp.permanentIgnoreDiagnostic",
+          arguments: [{ uri: document.uri, diagnostic }],
+        },
+      };
+
+      actions.push(temporaryIgnore, permanentIgnore);
+    }
+
+    return actions;
+  }
+}
