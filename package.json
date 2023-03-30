@@ -14,8 +14,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "authentura-mvp.helloWorld",
-        "title": "Hello World"
+        "command": "authentura-mvp.scan",
+        "title": "Authentura MVP: Scan for potential vulnerabilities"
+      },
+       {
+        "command": "authentura-mvp.clear",
+        "title": "Authentura MVP: Clear potential vulnerabilities"
       }
     ]
   },
@@ -34,6 +38,7 @@
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
+    "@types/request": "^2.48.8",
     "@types/vscode": "^1.76.0",
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
