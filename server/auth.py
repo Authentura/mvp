@@ -72,9 +72,9 @@ def check_cookie(username: str, token: str) -> bool:
     return True
 
 
-setup()
-
 if __name__ == "__main__":
+    setup()
+
     print("Adding new user to the database!")
     username = input("username: ")
     password = input("password: ")

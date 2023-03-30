@@ -2,7 +2,9 @@ import api
 import auth
 from flask import Flask, request, make_response
 from flask_restful import Api, Resource
+from dotenv import load_dotenv
 
+load_dotenv()
 
 app = Flask(__name__)
 restful = Api(app)
@@ -58,4 +60,7 @@ restful.add_resource(CheckCode, "/check/<model>")
 
 
 if __name__ == "__main__":
+    api.setup()
+    auth.setup()
+
     app.run(debug=True, port=3000, host="0.0.0.0")

@@ -67,7 +67,3 @@ def make_request(model: str, code: str):
     response = generate_response(prompt, model)
 
     return response, 200
-
-
-# Runs in the beginning of the program
-setup()
