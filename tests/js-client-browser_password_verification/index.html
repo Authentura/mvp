@@ -1,0 +1,51 @@
+<html>
+<head>
+<title>Secure Login Portal V2.0</title>
+</head>
+<body background="barbed_wire.jpeg" >
+<!-- standard MD5 implementation -->
+<script type="text/javascript" src="md5.js"></script>
+
+<script type="text/javascript">
+
+// Randomly generated password
+var passwordParts = [    "Spiral",    "Calamity",    "Character",    "Gopher",    "Password Verified",    "Incorrect password"];
+
+function verify() {
+    var checkpass = document.getElementById('pass').value;
+    var split = 4;
+    if (checkpass.substring(0, split * 2) === passwordParts[0]) {
+        if (checkpass.substring(split * 2, split * 2 * 2) === passwordParts[2]) {
+            if (checkpass.substring(split * 3 * 2, split * 4 * 2) === passwordParts[4]) {
+                if (checkpass.substring(6, 11) === passwordParts[1]) {
+                    if (checkpass.substring(split * 2 * 2, split * 3 * 2) === passwordParts[5]) {
+                        if (checkpass.substring(0xc, 0x10) === passwordParts[3]) {
+                            alert("Password Verified");
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            alert("Incorrect password");
+        }
+    }
+    else {
+        alert("Incorrect password");
+    }
+}
+</script>
+<div style="position:relative; padding:5px;top:50px; left:38%; width:350px; height:140px; background-color:gray">
+<div style="text-align:center">
+<p>New and Improved Login</p>
+
+<p>Enter valid credentials to proceed</p>
+<form action="index.html" method="post">
+<input type="password" id="pass" size="8" />
+<br/>
+<input type="submit" value="verify" onclick="verify(); return false;" />
+</form>
+</div>
+</div>
+</body>
+</html>
