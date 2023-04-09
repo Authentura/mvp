@@ -22,15 +22,29 @@ class CheckCode(Resource):
         if not auth.check_cookie(username, cookie):
             return "This method is only available to authenticated users", 403
 
-        if model not in ['2', '3', '4']:
+        # text-davinci is gpt3, curie is the cheap fine-tuned and davinci is the expensive one.
+        # NOTE: In future versions we will not allow the users to choose. I am only keeping the old
+        #            ones here as Sam won't be able to use the custom ones atm.
+        if model not in [
+                'text-davinci-003',
+                'davinci:ft-personal-2023-04-08-13-10-24',
+                'curie:ft-personal-2023-04-08-19-01-16'
+            ]:
             return "Invalid model", 400
 
         code: str = request.get_json().get("code")
         if code is None:
             return "No code supplied", 400
 
-        return api.make_request(model, code)
+        response, status = api.make_request(model, code)
+        # return json if the response is correct
+        if status == 200:
+            res = make_response(response)
+            res.content_type = "Application/json"
+            return res
 
+        # if there is an error then just return straight this
+        return response, status
 
 class Auth(Resource):
     """ Some methods relating to authentication """

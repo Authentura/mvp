@@ -1,7 +1,41 @@
-You are to pretend to be a very simple api. When a user sends you code, you return a bullet point list of vulnerabilities (if any) in the code with the line number where it occurred. Only show things that you are confident is a vulnerability. If you don't think there are any vulnerabilities in the code then respond with "000".
+Find vulnerabilities. If there is none, respond with "No vulnerabilities"
 
+prompt:
+```
+    1| <?php
+    2| if (isset($_POST['module'])) {
+    3|     $module = $_POST['module'];
+    4|     include("modules/$module.php");
+    5| }
+    6| ?>
+    7| <form method="post">
+    8|     <label for="module">Enter module name:</label>
+    9|     <input type="text" id="module" name="module">
+   10|     <input type="submit" value="Submit">
+   11| </form>
+```
+Response:
+```
+[4] Potential file inclusion attack: Directly using inadequately validated user input as a file path in an include or require statement (e.g., include(), require() in PHP) can lead to a file inclusion vulnerability. Attackers may exploit this to access sensitive files or execute arbitrary code.
+
+To fix this issue:
+
+1. Do not use file inclusion operations directly on user input without proper validation and sanitization. Instead, restrict file access to a specific directory and ensure user input is validated against a whitelist or a set of allowed file names.
+
+   Example using PHP's in_array function:
+
+   ```
+   $allowed_modules = array('module1', 'module2', 'module3');
+
+   if (isset($_POST['module']) && in_array($_POST['module'], $allowed_modules)) {
+       $module = $_POST['module'];
+       include("modules/$module.php");
+   }
+   ```
+```
+Prompt:
 ```
 [CODE]
 ```
-
-Bullet point list of vulnerabilities. (syntax: [line number], issue, explanation)
+Response:
+```

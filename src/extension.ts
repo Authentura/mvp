@@ -60,9 +60,15 @@ export function activate(context: vscode.ExtensionContext) {
 
       const code = document.getText();
 
-      // Make the request to our server
+      // change to text-davinci-3 for the old response with strings
+      // or if you don't have access to the fine-tuned model.
+      //const model = "davinci:ft-personal-2023-04-08-13-10-24";
+      const model = "curie:ft-personal-2023-04-08-19-01-16";
+      //const model = "text-davinci-003";
+
+
       request.post(
-        "http://localhost:3000/check/3",
+        "http://localhost:3000/check/"+model,
         {
           headers: {
             "content-type": "application/json",
@@ -73,7 +79,7 @@ export function activate(context: vscode.ExtensionContext) {
             code: code,
           },
         },
-        (error: { message: string }, _response, body: string) => {
+        (error: { message: string }, _response, body) => { // body is only a string if we error
           if (error) {
             vscode.window.showErrorMessage(
               "Error making API request: " + error.message
@@ -81,42 +87,43 @@ export function activate(context: vscode.ExtensionContext) {
 
             return;
           }
+          if (_response.statusCode !== 200) {
+            vscode.window.showErrorMessage(
+              "Invalid response from server"
+            );
 
-          let response = parseBody(body, outputLogger);
-
-          if (response.issues) {
-            const _diagnostics: vscode.Diagnostic[] = [];
-
-            for (let [lineNumber, issueTupleList] of response.issues) {
-              const lineText = editor.document.lineAt(lineNumber - 1).text;
-
-              const lineStart = lineText.length - lineText.trimStart().length;
-              const lineLength = lineText.length - 1;
-
-              const range = new vscode.Range(
-                lineNumber - 1,
-                lineStart,
-                lineNumber - 1,
-                lineLength
-              );
-
-              for (let [issue, explanation] of issueTupleList) {
-                const diagnostic = new vscode.Diagnostic(
-                  range,
-                  `${issue}\n\n${explanation}`,
-                  vscode.DiagnosticSeverity.Information
-                );
-
-                diagnostic.source = issue;
-                diagnostic.code = "authentura-mvp.vulnerability-diagnostic";
-
-
-                _diagnostics.push(diagnostic);
-              }
-            }
-
-            diagnostics.set(document.uri, _diagnostics);
           }
+          
+          const issues: Array<any> = body.issues;
+          
+          const _diagnostics: vscode.Diagnostic[] = [];
+          for (let issue of issues) {
+            const lineText = editor.document.lineAt(issue.line_number -1).text;
+            const lineStart = lineText.length - lineText.trimStart().length;
+            const lineLength = lineText.length - 1;
+
+            const range = new vscode.Range(
+              issue.line_number - 1,
+              lineStart,
+              issue.line_number - 1,
+              lineLength
+            );
+
+            const diagnostic = new vscode.Diagnostic(
+              range,
+              `${issue.title}\n\n${issue.body}`,
+              vscode.DiagnosticSeverity.Information
+            );
+
+            diagnostic.source = issue;
+            diagnostic.code = "authentura-mvp.vulnerability-diagnostic";
+
+
+            _diagnostics.push(diagnostic);
+          
+          }
+          diagnostics.set(document.uri, _diagnostics);
+
         }
       );
     }
