@@ -28,7 +28,9 @@ class CheckCode(Resource):
         if model not in [
                 'text-davinci-003',
                 'davinci:ft-personal-2023-04-08-13-10-24',
-                'curie:ft-personal-2023-04-08-19-01-16'
+                'curie:ft-personal-2023-04-08-19-01-16',
+                'curie:ft-personal-2023-04-08-19-01-16',
+                'curie:ft-personal-2023-04-12-13-08-55', # current
             ]:
             return "Invalid model", 400
 
