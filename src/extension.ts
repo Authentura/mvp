@@ -44,9 +44,9 @@ function displayIssues(issues: IssueObject[]) {
         // TODO: If this line lands on an empty line then it shows nothing
         //        to the user. We should probably fix that at some point.
         range = new vscode.Range(
-            line,
+            line -1,
             lineStart,
-            line,
+            line -1,
             lineLength
         );
         
