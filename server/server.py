@@ -39,6 +39,7 @@ class CheckCode(Resource):
             return "No code supplied", 400
 
         response, status = api.make_request(model, code)
+        print('response: ',response , type(response))
         # return json if the response is correct
         if status == 200:
             res = make_response(response)
