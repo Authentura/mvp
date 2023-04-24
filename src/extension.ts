@@ -50,7 +50,6 @@ function displayIssues(issues: IssueObject[]) {
             lineLength
         );
         
-        vscode.window.showInformationMessage(`ranging from ${line}:${lineStart} to ${line}:${lineLength}`);
         _diagnostics.push(new vscode.Diagnostic(
             range,
             `${issueTitle}\n\n${issueBody}`,
