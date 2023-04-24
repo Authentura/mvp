@@ -44,9 +44,13 @@ function displayIssues(issues: IssueObject[]) {
         // TODO: If this line lands on an empty line then it shows nothing
         //        to the user. We should probably fix that at some point.
         range = new vscode.Range(
-            line -1,
+            // NOTE: gpt can often be very bad at finding the exact
+            //       line an issue is on. These +2 and -1 lines should
+            //       help a little, but in the long term we shuld just
+            //       increase its accuracy.
+            line -2,
             lineStart,
-            line -1,
+            line,
             lineLength
         );
         

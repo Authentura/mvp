@@ -5,7 +5,7 @@ import {Line, Issue, Explanation, IssueMap, IssueObject } from "../types";
 
 const MODEL = 'curie:ft-personal-2023-04-12-13-08-55';
 // all of these will have to change eventually
-const SERVER = "http://localhost:3000/check/";
+const SERVER = "http://localhost:3000/classify/";
 const HARDCODE_COOKIE = "token=e0f25945-becd-4e8d-a372-278b90597fee";
 const HARDCODE_USERNAME = "admin";
 
@@ -52,7 +52,7 @@ export const run = (
                     const issueObject: IssueObject = {
                         line: issue.line_number,
                         title: issue.title,
-                        body: issue.body
+                        body: ""
                     };
                     
                     issues.push(issueObject);

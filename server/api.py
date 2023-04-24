@@ -78,8 +78,8 @@ def generate_response(prompt, model) -> str:
     return response.choices[0].text.strip()
 
 
-def make_request(model: str, code: str):
-    """ Make a request to the openAI api """
+def make_request_classify(model: str, code: str):
+    """ Make a request to our vulnerability classify model """
 
     # Add line numbers to code
     # GPT cannot count, if we want line numbers we have to add it ourselves
@@ -88,15 +88,8 @@ def make_request(model: str, code: str):
         code_with_numbers += f"{i+1:>5}| {line}\n"
     print('code_with_numbers: ',code_with_numbers , type(code_with_numbers))
 
-    if model.startswith("text-davinci"):
-        # Get prompt
-        prompt = get_prompt()
-        prompt = prompt.replace("[CODE]", code_with_numbers)
-
-    else:
-        prompt = code_with_numbers
-        prompt += "\n\n###\n\n"
-
+    prompt = code_with_numbers
+    prompt += "\n\n###\n\n"
 
     # Get response
     response = generate_response(prompt, model)

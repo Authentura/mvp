@@ -10,8 +10,8 @@ app = Flask(__name__)
 restful = Api(app)
 
 
-class CheckCode(Resource):
-    """ Methods relating to checking code """
+class GPTClassify(Resource):
+    """ Using the GPT model to find and classify vulnerabilities """
     @staticmethod
     def post(model):
         """ Send code to get checked by GPT """
@@ -22,13 +22,9 @@ class CheckCode(Resource):
         if not auth.check_cookie(username, cookie):
             return "This method is only available to authenticated users", 403
 
-        # text-davinci is gpt3, curie is the cheap fine-tuned and davinci is the expensive one.
-        # NOTE: In future versions we will not allow the users to choose. I am only keeping the old
-        #            ones here as Sam won't be able to use the custom ones atm.
+        # NOTE: To simplify things down, only the simplified models are allowed here
+        #       and not the ones that actually explain code
         if model not in [
-                'text-davinci-003',
-                'davinci:ft-personal-2023-04-08-13-10-24',
-                'curie:ft-personal-2023-04-08-19-01-16',
                 'curie:ft-personal-2023-04-08-19-01-16',
                 'curie:ft-personal-2023-04-12-13-08-55', # current
             ]:
@@ -39,7 +35,6 @@ class CheckCode(Resource):
             return "No code supplied", 400
 
         response, status = api.make_request(model, code)
-        print('response: ',response , type(response))
         # return json if the response is correct
         if status == 200:
             res = make_response(response)
@@ -48,6 +43,7 @@ class CheckCode(Resource):
 
         # if there is an error then just return straight this
         return response, status
+
 
 class Auth(Resource):
     """ Some methods relating to authentication """
@@ -73,7 +69,7 @@ class Auth(Resource):
 
 
 restful.add_resource(Auth, "/login")
-restful.add_resource(CheckCode, "/check/<model>")
+restful.add_resource(GPTClassify, "/classify/<model>")
 
 
 if __name__ == "__main__":
