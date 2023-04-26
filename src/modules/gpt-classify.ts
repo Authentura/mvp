@@ -25,7 +25,7 @@ export const run = (
     // This is literally only needed because too many
     // variable names are re-used
     const codeBody = editor.document.getText(codeRange);
-    const startline = codeRange.start.line +1;
+    const startline = codeRange.start.line;
 
     return new Promise((resolve, reject) => {
         request.post(

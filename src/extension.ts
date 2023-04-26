@@ -5,6 +5,7 @@ import {Line, Issue, Explanation, IssueMap, IssueObject } from "./types";
 // keep track of all diagnostics that are currently displayed
 let DIAGNOSTICS: vscode.DiagnosticCollection;
 let ISSUES: IssueObject[] = [];
+let isManualSave = false;
 
 function simpleTokenizer(code: string): string[] {
     const regex = /[\w]+|[^\s\w]+/g;
@@ -118,7 +119,7 @@ export function activate(context: vscode.ExtensionContext) {
     // make sure it gets disposed of when not needed
     context.subscriptions.push(outputLogger);
     outputLogger.show(true);
-    outputLogger.appendLine("Initialised");
+    outputLogger.appendLine("Authentura Scanner is monitoring!");
     
 
 
@@ -193,6 +194,33 @@ export function activate(context: vscode.ExtensionContext) {
     });
     context.subscriptions.push(scanCommand);
     
+
+    // Register this scan command on save.
+    // NOTE: we might not want this in the future as it could get expensive, however I think it might be useful
+    //
+    // Listen for the onWillSaveTextDocument event
+    context.subscriptions.push(
+        vscode.workspace.onWillSaveTextDocument((e: vscode.TextDocumentWillSaveEvent) => {
+            // Set the isManualSave flag to true if the reason is manual save
+            isManualSave = e.reason === vscode.TextDocumentSaveReason.Manual;
+        })
+    );
+    // Listen for the onDidSaveTextDocument event
+    context.subscriptions.push(
+        vscode.workspace.onDidSaveTextDocument(async (document: vscode.TextDocument) => {
+            if (isManualSave) {
+                try {
+                    // Execute the authentura-mvp.scan command
+                    await vscode.commands.executeCommand('authentura-mvp.scan');
+                } catch (error) {
+                    const errorMsg = (error as Error).message;
+                    vscode.window.showErrorMessage(`Failed to execute command: ${errorMsg}`);
+                }
+            }
+            // Reset the isManualSave flag
+            isManualSave = false;
+        })
+    );
 }
 
 // This method is called when your extension is deactivated
