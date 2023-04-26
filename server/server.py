@@ -1,5 +1,7 @@
 import api
+import data
 import auth
+import database
 from flask import Flask, request, make_response
 from flask_restful import Api, Resource
 from dotenv import load_dotenv
@@ -34,7 +36,7 @@ class GPTClassify(Resource):
         if code is None:
             return "No code supplied", 400
 
-        response, status = api.make_request_classify(model, code)
+        response, status = api.make_request_classify(model, code, username)
         # return json if the response is correct
         if status == 200:
             res = make_response(response)
@@ -70,7 +72,8 @@ class GPTExplain(Resource):
             return "No code (`code` str), vulnerability title (`title` str),"\
                    " or line number (`line` int) provided.", 400
 
-        response, status = api.make_request_explain(model, code, line, title)
+        response, status = api.make_request_explain(model, code, line, title, username)
+
 
     
 
@@ -105,6 +108,6 @@ restful.add_resource(GPTClassify, "/classify/<model>")
 
 if __name__ == "__main__":
     api.setup()
-    auth.setup()
+    database.setup()
 
     app.run(debug=True, port=3000, host="0.0.0.0")

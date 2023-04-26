@@ -3,30 +3,9 @@ import time
 import uuid
 import bcrypt
 import sqlite3
+import database
 
 
-def setup():
-    """ Make sure the database exists """
-    # make sure there is a database
-    if not os.path.exists("./database.db"):
-        open("./database.db", "w").close()
-        conn = sqlite3.connect("./database.db")
-        conn.execute(
-            "CREATE TABLE auth (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT)"
-        )
-
-        conn.execute(
-            "CREATE TABLE cookies\
-                (\
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,\
-                    username TEXT,\
-                    cookie TEXT,\
-                    expires INTEGER\
-                )"
-        )
-        conn.commit()
-
-    print("Database already exists!")
 
 
 def authenticate(username: str, password: str) -> tuple[str, bool]:
@@ -73,7 +52,7 @@ def check_cookie(username: str, token: str) -> bool:
 
 
 if __name__ == "__main__":
-    setup()
+    database.setup()
 
     print("Adding new user to the database!")
     username = input("username: ")

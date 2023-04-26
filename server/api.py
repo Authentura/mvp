@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import data
 import openai
 
 
@@ -78,7 +79,7 @@ def generate_response(prompt, model) -> str:
     return response.choices[0].text.strip()
 
 
-def make_request_classify(model: str, code: str) -> tuple[dict|int]:
+def make_request_classify(model: str, code: str, username: str) -> tuple[dict|int]:
     """ Make a request to our vulnerability classify model """
 
     # Add line numbers to code
@@ -94,7 +95,10 @@ def make_request_classify(model: str, code: str) -> tuple[dict|int]:
     # Get response
     response = generate_response(prompt, model)
     print('response: ',response , type(response))
-
+    
+    # Save request
+    data.save_request(username, model, prompt, response)
+    
     if not response.strip().strip().startswith("No"):
         response_json: dict = format_response(response)
     else:
@@ -104,7 +108,7 @@ def make_request_classify(model: str, code: str) -> tuple[dict|int]:
 
 
 
-def make_request_explain(model: str, code: str, line: int, title: str) -> tuple[dict|int]:
+def make_request_explain(model: str, code: str, line: int, title: str, username: str) -> tuple[dict|int]:
     """ Make a request to the openai api to explain a vulnerability """
     # Add line numbers to code
     # GPT cannot count, if we want line numbers we have to add it ourselves
@@ -124,6 +128,9 @@ def make_request_explain(model: str, code: str, line: int, title: str) -> tuple[
 
     response = generate_response(prompt, model)
     print('response: ',response , type(response))
+    
+    # Save request
+    data.save_request(username, model, prompt, response)
 
     response_json = {
         "explanation": response,
