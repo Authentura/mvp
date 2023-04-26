@@ -9,8 +9,12 @@ const SERVER = "http://localhost:3000/classify/";
 const HARDCODE_COOKIE = "token=e0f25945-becd-4e8d-a372-278b90597fee";
 const HARDCODE_USERNAME = "admin";
 
+
+
+
+
 export const run = (
-    body: string,
+    codeRange: vscode.Range,
     // These two arguments are not needed for this module,
     // they are only present to be consistent across all modules.
     _filePath: string,
@@ -18,6 +22,10 @@ export const run = (
     outputLogger: vscode.OutputChannel,
     editor: vscode.TextEditor
 ): Promise<IssueObject[]> => {
+    // This is literally only needed because too many
+    // variable names are re-used
+    const codeBody = editor.document.getText(codeRange);
+    const startline = codeRange.start.line +1;
 
     return new Promise((resolve, reject) => {
         request.post(
@@ -30,7 +38,7 @@ export const run = (
                 },
                 json: {
                     username: HARDCODE_USERNAME,
-                    code: body
+                    code: codeBody
                 }
             },
             (error, response, body) => {
@@ -39,7 +47,7 @@ export const run = (
                     return;
                 }
                 if (response.statusCode !== 200) {
-                    reject("Invalid response from server");
+                    reject("Invalid response from server" + body);
                     return;
                 }
 
@@ -50,9 +58,11 @@ export const run = (
                 const issues: IssueObject[] = [];
                 for (let issue of body.issues) {
                     const issueObject: IssueObject = {
-                        line: issue.line_number,
+                        // need to add the start line back as we don't always start with the first line of the document
+                        line: issue.line_number + startline,
                         title: issue.title,
-                        body: ""
+                        body: "",
+                        code: codeBody
                     };
                     
                     issues.push(issueObject);

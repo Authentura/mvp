@@ -4,7 +4,51 @@ import {Line, Issue, Explanation, IssueMap, IssueObject } from "./types";
 
 // keep track of all diagnostics that are currently displayed
 let DIAGNOSTICS: vscode.DiagnosticCollection;
+let ISSUES: IssueObject[] = [];
 
+function simpleTokenizer(code: string): string[] {
+    const regex = /[\w]+|[^\s\w]+/g;
+    return code.match(regex) || [];
+}
+
+// fucntion tries to get x amount of tokens from above and below the cursor.
+// This is needed due to the token limit of gpt models.
+// NOTE: all of this code was written by GPT, it might have issues.
+// TODO: if the cursor is at the bottom or the top of the file we will get less tokens. This should be fixed
+function getCodeAroundCursor(cursorPosition: vscode.Position, targetTokenCount: number): vscode.Range {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        throw new Error('No active editor found!');
+    }
+
+    const document = editor.document;
+    const totalLines = document.lineCount;
+
+    let tokensAbove = 0;
+    let tokensBelow = 0;
+    let startLine = cursorPosition.line;
+    let endLine = cursorPosition.line;
+
+    // Get tokens above the cursor
+    while (startLine > 0 && tokensAbove < targetTokenCount / 2) {
+        const lineTokens = simpleTokenizer(document.lineAt(startLine).text);
+        tokensAbove += lineTokens.length;
+        startLine--;
+    }
+
+    // Get tokens below the cursor
+    while (endLine < totalLines - 1 && (tokensBelow < targetTokenCount / 2 || tokensAbove + tokensBelow < targetTokenCount)) {
+        endLine++;
+        const lineTokens = simpleTokenizer(document.lineAt(endLine).text);
+        tokensBelow += lineTokens.length;
+    }
+
+    
+    const start = new vscode.Position(startLine, 0);
+    const end = new vscode.Position(endLine, document.lineAt(endLine).text.length);
+    const selectedRange = new vscode.Range(start, end);
+    return selectedRange;
+}
 
 // Function to clear all then reset the current diagnostics
 // function resetDiagnostics
@@ -56,7 +100,10 @@ function displayIssues(issues: IssueObject[]) {
         
         _diagnostics.push(new vscode.Diagnostic(
             range,
-            `${issueTitle}\n\n${issueBody}`,
+            // This is a very dirty way of storing the id of the issue,
+            //  and I am terribly sorry for whoever will have to deal with
+            //  this in the future :/
+            `${issueTitle}\n\n${issueBody}\n(ID:${ISSUES.indexOf(issue)})`,
             vscode.DiagnosticSeverity.Information
         ));
     });
@@ -103,8 +150,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
         
         // Collect the data
-        // TODO: body should only be a certain range of code later
-        const body: string = document.getText();
+        const codeRange = getCodeAroundCursor(editor.selection.active, 500);
         const filePath: string = editor.document.uri.fsPath;
         let projectPath: string = "";
 
@@ -127,13 +173,16 @@ export function activate(context: vscode.ExtensionContext) {
         // Load the GPT module
         import("./modules/gpt-classify").then((module) => {
             module.run(
-                body,
+                codeRange,
                 filePath,
                 projectPath,
                 outputLogger,
                 editor
             )
             .then((issues) => {
+                // Keep track of all issues
+                ISSUES = [...ISSUES, ...issues];
+
                 displayIssues(issues);
             })
             .catch((error) => {
@@ -141,10 +190,9 @@ export function activate(context: vscode.ExtensionContext) {
             });
         });
         
-        
     });
-
     context.subscriptions.push(scanCommand);
+    
 }
 
 // This method is called when your extension is deactivated

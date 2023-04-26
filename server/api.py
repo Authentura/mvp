@@ -69,7 +69,7 @@ def generate_response(prompt, model) -> str:
     response = openai.Completion.create(
         engine=model,
         prompt=prompt,
-        max_tokens=500,
+        max_tokens=10,
         n=1,
         stop="\n###",
         temperature=0,
@@ -78,7 +78,7 @@ def generate_response(prompt, model) -> str:
     return response.choices[0].text.strip()
 
 
-def make_request_classify(model: str, code: str):
+def make_request_classify(model: str, code: str) -> tuple[dict|int]:
     """ Make a request to our vulnerability classify model """
 
     # Add line numbers to code
@@ -99,5 +99,35 @@ def make_request_classify(model: str, code: str):
         response_json: dict = format_response(response)
     else:
         response_json = {"issues": []}
+
+    return response_json, 200
+
+
+
+def make_request_explain(model: str, code: str, line: int, title: str) -> tuple[dict|int]:
+    """ Make a request to the openai api to explain a vulnerability """
+    # Add line numbers to code
+    # GPT cannot count, if we want line numbers we have to add it ourselves
+    code_with_numbers = ""
+    for i, line in enumerate(code.split("\n")):
+        code_with_numbers += f"{i+1:>5}| {line}\n"
+    print('code_with_numbers: ',code_with_numbers , type(code_with_numbers))
+
+
+    with open("./explain/prompt.txt", "r", encoding="utf-8")as infile:
+        prompt = infile.read()
+
+    prompt = prompt.replace("[CODE]", code_with_numbers)
+    prompt = prompt.replace("[LINE]", str(line))
+    prompt = prompt.replace("[TITLE]", title)
+    print('prompt: ',prompt , type(prompt))
+
+    response = generate_response(prompt, model)
+    print('response: ',response , type(response))
+
+    response_json = {
+        "explanation": response,
+        "vulnerable": (False if response.upper().startswith("NOT VULNERABLE") else True)
+      }
 
     return response_json, 200

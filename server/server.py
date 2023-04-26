@@ -34,7 +34,7 @@ class GPTClassify(Resource):
         if code is None:
             return "No code supplied", 400
 
-        response, status = api.make_request(model, code)
+        response, status = api.make_request_classify(model, code)
         # return json if the response is correct
         if status == 200:
             res = make_response(response)
@@ -43,6 +43,36 @@ class GPTClassify(Resource):
 
         # if there is an error then just return straight this
         return response, status
+
+
+class GPTExplain(Resource):
+    """ USE GPT to explain vulnerabilities we found """
+    @staticmethod
+    def post(model):
+        """ Get an explanation """
+        # auth
+        cookie: str = request.cookies.get("token")
+        username: str = request.get_json().get("username")
+        if not auth.check_cookie(username, cookie):
+            return "This method is only available to authenticated users", 403
+
+        if model not in [
+            "curie",
+            "text-davinci-003"
+            ]:
+            return "Invalid model", 400
+
+        code: str = request.get_json().get("code")
+        line: int = request.get_json().get("line")
+        title: str = request.get_json().get("title")
+
+        if None in [code, line, title]:
+            return "No code (`code` str), vulnerability title (`title` str),"\
+                   " or line number (`line` int) provided.", 400
+
+        response, status = api.make_request_explain(model, code, line, title)
+
+    
 
 
 class Auth(Resource):
@@ -69,6 +99,7 @@ class Auth(Resource):
 
 
 restful.add_resource(Auth, "/login")
+restful.add_resource(GPTExplain, "/explain/<model>")
 restful.add_resource(GPTClassify, "/classify/<model>")
 
 
