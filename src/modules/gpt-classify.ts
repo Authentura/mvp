@@ -5,8 +5,8 @@ import {Line, Issue, Explanation, IssueMap, IssueObject } from "../types";
 
 const MODEL = 'curie:ft-personal-2023-04-12-13-08-55';
 // all of these will have to change eventually
-const SERVER = "http://localhost:3000/classify/";
-const HARDCODE_COOKIE = "token=e0f25945-becd-4e8d-a372-278b90597fee";
+const SERVER = "https://mvp.authentura.co.uk/classify/";
+const HARDCODE_COOKIE = "token=1b679904-73d3-4add-97b0-a0c6d86bf756";
 const HARDCODE_USERNAME = "admin";
 
 

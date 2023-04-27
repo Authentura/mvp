@@ -124,10 +124,8 @@ def make_request_explain(model: str, code: str, line: int, title: str, username:
     prompt = prompt.replace("[CODE]", code_with_numbers)
     prompt = prompt.replace("[LINE]", str(line))
     prompt = prompt.replace("[TITLE]", title)
-    print('prompt: ',prompt , type(prompt))
 
     response = generate_response(prompt, model)
-    print('response: ',response , type(response))
     
     # Save request
     data.save_request(username, model, prompt, response)
