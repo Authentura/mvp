@@ -105,9 +105,8 @@ restful.add_resource(Auth, "/login")
 restful.add_resource(GPTExplain, "/explain/<model>")
 restful.add_resource(GPTClassify, "/classify/<model>")
 
+api.setup()
+database.setup()
 
 if __name__ == "__main__":
-    api.setup()
-    database.setup()
-
     app.run(debug=True, port=3000, host="0.0.0.0")
