@@ -28,7 +28,7 @@ def get_prompt() -> str:
     return prompt.strip("\n")
 
 
-def format_response(res: str) -> list[dict[str,str]]:
+def format_response(res: str) -> list:#[dict[str,str]]:
     """
         GPT models respond to queries as one long string.
         This function breaks that string into json to make
@@ -79,7 +79,7 @@ def generate_response(prompt, model) -> str:
     return response.choices[0].text.strip()
 
 
-def make_request_classify(model: str, code: str, username: str) -> tuple[dict|int]:
+def make_request_classify(model: str, code: str, username: str) -> tuple:#[dict|int]:
     """ Make a request to our vulnerability classify model """
 
     # Add line numbers to code
@@ -108,7 +108,7 @@ def make_request_classify(model: str, code: str, username: str) -> tuple[dict|in
 
 
 
-def make_request_explain(model: str, code: str, line: int, title: str, username: str) -> tuple[dict|int]:
+def make_request_explain(model: str, code: str, line: int, title: str, username: str) -> tuple:#[dict|int]:
     """ Make a request to the openai api to explain a vulnerability """
     # Add line numbers to code
     # GPT cannot count, if we want line numbers we have to add it ourselves

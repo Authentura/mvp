@@ -8,7 +8,7 @@ import database
 
 
 
-def authenticate(username: str, password: str) -> tuple[str, bool]:
+def authenticate(username: str, password: str) -> tuple:#[str, bool]: 
     """ Check the login and return a token """
 
     conn = sqlite3.connect("./database.db")
