@@ -21,6 +21,22 @@
         "command": "authentura-mvp.clear",
         "title": "Authentura MVP: Clear potential vulnerabilities"
       }
+    ],
+    "configuration": [
+      {
+        "type": "string",
+        "title": "Username",
+        "description": "Your username for the extension. If you don't have one, get a registration link our team to sign up.",
+        "default": "",
+        "scope": "window"
+      },
+      {
+        "type": "string",
+        "title": "Token",
+        "description": "Access token for using the extension. This should be shown to you when you register. If you need a new one, visit https://mvp.authentura.co.uk/login",
+        "default": "",
+        "scope": "window"
+      }
     ]
   },
   "scripts": {

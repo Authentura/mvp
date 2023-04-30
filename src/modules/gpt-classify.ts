@@ -6,9 +6,6 @@ import {Line, Issue, Explanation, IssueMap, IssueObject } from "../types";
 const MODEL = 'curie:ft-personal-2023-04-12-13-08-55';
 // all of these will have to change eventually
 const SERVER = "https://mvp.authentura.co.uk/classify/";
-const HARDCODE_COOKIE = "token=1b679904-73d3-4add-97b0-a0c6d86bf756";
-const HARDCODE_USERNAME = "admin";
-
 
 
 
@@ -28,16 +25,26 @@ export const run = (
     const startline = codeRange.start.line;
 
     return new Promise((resolve, reject) => {
+
+        // Get the username and the token from settings
+        const configuration = vscode.workspace.getConfiguration('authentura-mvp');
+        const settingsUsername: string = configuration.get('Username') || "";
+        const settingsToken: string = configuration.get('Token') || "";
+        if (settingsUsername === "" || settingsToken === "") {
+            reject("Username or access token not set in settings!");
+            return;
+        }
+        
         request.post(
             SERVER + MODEL,
             {
                 headers: {
                     // eslint-disable-next-line @typescript-eslint/naming-convention
                     "Content-Type": "Application/json",
-                    cookie: HARDCODE_COOKIE
+                    cookie: settingsToken
                 },
                 json: {
-                    username: HARDCODE_USERNAME,
+                    username: settingsUsername,
                     code: codeBody
                 }
             },
