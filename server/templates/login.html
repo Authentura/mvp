@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Page</title>
+  <style>
+    form {
+      display: flex;
+      flex-direction: column;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    input, button {
+      margin-bottom: 10px;
+    }
+    .error {
+      color: red;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="titleMessage">Login to get a new access token</h1>
+  <div id="errorContainer"></div>
+  <form id="registrationForm" method="POST">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    
+    <button type="submit">Register</button>
+  </form>
+  <template id="tokenTemplate">
+    <div>
+      <p>
+        Your token for using the extension:
+      </p>
+      <input type="text" id="token" style="min-width: 40ch" readonly>
+      <!-- <button id="copyButton">Copy to clipboard</button> -->
+
+      <p>
+         In order to make the extension work, set this token<br>
+         and your username in the extension settings.
+      </p>
+    </div>
+  </template>
+  <script>
+    const form = document.getElementById('registrationForm');
+    const errorContainer = document.getElementById('errorContainer');
+    const tokenTemplate = document.getElementById('tokenTemplate');
+    
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      
+      const formData = new FormData(form);
+      const response = await fetch(window.location.href, {
+        method: 'POST',
+        body: formData
+      });
+      
+      errorContainer.innerHTML = '';
+
+      if (response.status === 200) {
+        const token = await response.text();
+        const tokenElement = tokenTemplate.content.cloneNode(true);
+        tokenElement.querySelector('#token').value = token.slice(1, -2);
+
+        ////tokenElement.querySelector('#copyButton').addEventListener('click', () => {
+        ////  const tokenInput = tokenElement.querySelector('#token');
+        ////  console.log(tokenInput);
+        ////  tokenInput.select();
+        ////  document.execCommand('copy');
+        ////});
+
+        document.getElementById("titleMessage").textContent = "Successfully logged in!";
+        form.remove();
+        errorContainer.parentNode.insertBefore(tokenElement, errorContainer.nextSibling);
+      } else {
+        const errorMessage = await response.text();
+        const error = document.createElement('p');
+        error.classList.add('error');
+        error.textContent = errorMessage;
+        errorContainer.appendChild(error);
+      }
+    });
+
+    //form.addEventListener('submit', async (event) => {
+    //  event.preventDefault();
+    //  
+    //  const formData = new FormData(form);
+    //  const response = await fetch(window.location.href, {
+    //    method: 'POST',
+    //    body: formData
+    //  });
+    //  
+    //  errorContainer.innerHTML = '';
+
+    //  if (response.status === 200) {
+    //    const token = await response.text();
+    //    const tokenElement = tokenTemplate.content.cloneNode(true);
+    //    tokenElement.querySelector('#token').value = token;
+
+    //    tokenElement.querySelector('#copyButton').addEventListener('click', () => {
+    //      const tokenInput = tokenElement.querySelector('#token');
+    //      tokenInput.select();
+    //      document.execCommand('copy');
+    //    });
+
+    //    form.remove();
+    //    errorContainer.insertAdjacentElement('afterend', tokenElement);
+    //  } else {
+    //    const errorMessage = await response.text();
+    //    const error = document.createElement('p');
+    //    error.classList.add('error');
+    //    error.textContent = errorMessage.slice(1, -2);
+    //    errorContainer.appendChild(error);
+    //  }
+    //})
+  </script>
+</body>
+</html>
