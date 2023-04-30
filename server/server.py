@@ -89,8 +89,12 @@ class Auth(Resource):
     def post():
         """ login """
 
-        username: str = request.get_json().get("username")
-        password: str = request.get_json().get("password")
+        if request.headers.get("Content-Type").lower() == "application/json":
+            username: str = request.get_json().get("username")
+            password: str = request.get_json().get("password")
+        else:
+            username: str = request.form.get("username")
+            password: str = request.form.get("password")
 
         if username is None or password is None:
             return "No username or password supplied", 400
@@ -102,8 +106,18 @@ class Auth(Resource):
         res = make_response("OK")
         res.status_code = 200
         res.set_cookie("token", token)
+        return token, 200
 
+    
+    @staticmethod
+    def get():
+        """ Get a new token for an existing account web page """
+        res = make_response(render_template("login.html"))
+        res.status_code = 200
+        res.content_type = "Text/HTML"
         return res
+
+            
 
 
 
@@ -138,9 +152,9 @@ class Register(Resource):
         if username is None or password is None:
             return "No username or password supplied", 400
         
-        res, status = auth.register_and_use_token(token, username, password)
+        response, status = auth.register_and_use_token(token, username, password)
         if status != 200:
-            return res, status
+            return response, status
         
         return auth.authenticate(username, password)
         
