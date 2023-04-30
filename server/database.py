@@ -32,6 +32,14 @@ def setup():
                     date INTEGER\
                 )"
         )
+
+        conn.execute(
+            "CREATE TABLE tokens\
+            (\
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,\
+                    token TEXT\
+            )"
+        )
         conn.commit()
 
     print("Database already exists!")

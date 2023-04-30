@@ -2,8 +2,13 @@ import api
 import data
 import auth
 import database
-from flask import Flask, request, make_response
+
+from flask import Flask
+from flask import request
+from flask import make_response
+from flask import render_template
 from flask_restful import Api, Resource
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -91,7 +96,7 @@ class Auth(Resource):
             return "No username or password supplied", 400
 
         token, success = auth.authenticate(username, password)
-        if not success:
+        if success != 200:
             return "Invalid username or password", 403
 
         res = make_response("OK")
@@ -101,7 +106,51 @@ class Auth(Resource):
         return res
 
 
+
+class Register(Resource):
+    """ Provided a link with a one-time use token, this allows users to register """
+    @staticmethod
+    def get(token: str):
+        """ A simple web page allowing the user to register to the app """
+        
+        if token is None or len(token) == 0:
+            return "You can only register with an invite link", 400
+        
+        if not auth.validate_register_token(token):
+            return "This token is not valid or has alredy been used", 400
+        
+        res = make_response(render_template("register.html"))
+        res.status_code = 200
+        res.content_type = "Text/HTML"
+        return res
+    
+
+    @staticmethod
+    def post(token: str):
+        """ Allow the user to register if they have a valid token """
+        
+        if token is None or len(token) == 0:
+            return "You can only register with an invite link", 400
+        
+        username: str = request.form.get("username")
+        password: str = request.form.get("password")
+
+        if username is None or password is None:
+            return "No username or password supplied", 400
+        
+        res, status = auth.register_and_use_token(token, username, password)
+        if status != 200:
+            return res, status
+        
+        return auth.authenticate(username, password)
+        
+        
+        
+
+
+
 restful.add_resource(Auth, "/login")
+restful.add_resource(Register, "/register/<token>")
 restful.add_resource(GPTExplain, "/explain/<model>")
 restful.add_resource(GPTClassify, "/classify/<model>")
 
