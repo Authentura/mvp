@@ -9,16 +9,16 @@ def search():
         username = request.form.get('username')
         conn = sqlite3.connect('users.db')
         cursor = conn.cursor()
-        query = f"SELECT * FROM users WHERE username='{username}'"
+        query = f'SELECT * FROM users WHERE username=\'{username}\''
         cursor.execute(query)
         results = cursor.fetchall()
         return render_template_string('<ul>{% for result in results %}<li>{{ result }}</li>{% endfor %}</ul>', results=results)
     else:
         return render_template_string('''
-        <form method="POST">
-            <label for="username">Username:</label>
-            <input type="text" name="username">
-            <button type="submit">Search</button>
+        <form method='POST'>
+            <label for='username'>Username:</label>
+            <input type='text' name='username'>
+            <button type='submit'>Search</button>
         </form>
         ''')
 

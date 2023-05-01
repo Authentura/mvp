@@ -25,6 +25,7 @@ func main() {
 		defer file.Close()
 
 		fileInfo, err := file.Stat()
+
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("Error reading file information"))

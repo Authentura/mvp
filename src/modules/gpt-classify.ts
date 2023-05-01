@@ -27,9 +27,9 @@ export const run = (
     return new Promise((resolve, reject) => {
 
         // Get the username and the token from settings
-        const configuration = vscode.workspace.getConfiguration('authentura-mvp');
-        const settingsUsername: string = configuration.get('Username') || "";
-        const settingsToken: string = configuration.get('Token') || "";
+        const configuration = vscode.workspace.getConfiguration('authenturaMvp');
+        const settingsUsername: string = configuration.get('username') || "";
+        const settingsToken: string = configuration.get('token') || "";
         if (settingsUsername === "" || settingsToken === "") {
             reject("Username or access token not set in settings!");
             return;
@@ -41,7 +41,7 @@ export const run = (
                 headers: {
                     // eslint-disable-next-line @typescript-eslint/naming-convention
                     "Content-Type": "Application/json",
-                    cookie: settingsToken
+                    cookie: `token=${settingsToken}`
                 },
                 json: {
                     username: settingsUsername,
@@ -54,7 +54,7 @@ export const run = (
                     return;
                 }
                 if (response.statusCode !== 200) {
-                    reject("Invalid response from server" + body);
+                    reject("Invalid response from server: " + body);
                     return;
                 }
 
