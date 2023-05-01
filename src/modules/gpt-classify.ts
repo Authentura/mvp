@@ -5,7 +5,8 @@ import {Line, Issue, Explanation, IssueMap, IssueObject } from "../types";
 
 const MODEL = 'curie:ft-personal-2023-04-12-13-08-55';
 // all of these will have to change eventually
-const SERVER = "https://mvp.authentura.co.uk/classify/";
+//const SERVER = "https://mvp.authentura.co.uk/presentation/";
+const SERVER = "http://localhost:3000/presentation/";
 
 
 
@@ -30,10 +31,10 @@ export const run = (
         const configuration = vscode.workspace.getConfiguration('authentura-mvp');
         const settingsUsername: string = configuration.get('Username') || "";
         const settingsToken: string = configuration.get('Token') || "";
-        if (settingsUsername === "" || settingsToken === "") {
-            reject("Username or access token not set in settings!");
-            return;
-        }
+        //if (settingsUsername === "" || settingsToken === "") {
+        //    reject("Username or access token not set in settings!");
+        //    return;
+        //}
         
         request.post(
             SERVER + MODEL,
@@ -68,7 +69,7 @@ export const run = (
                         // need to add the start line back as we don't always start with the first line of the document
                         line: issue.line_number + startline,
                         title: issue.title,
-                        body: "",
+                        body: issue.body,
                         code: codeBody
                     };
                     

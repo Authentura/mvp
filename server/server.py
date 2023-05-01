@@ -50,6 +50,36 @@ class GPTClassify(Resource):
 
         # if there is an error then just return straight this
         return response, status
+    
+
+class Presentation(Resource):
+    """ Create a fake version of how the eventual product should look """
+    @staticmethod
+    def post(model):
+        line_number = 10
+        title = "SQL injection"
+        body = "The query string being built in the 'search' function is using user input to construct an SQL query, which can be manipulated by an attacker to perform unintended operations on the database. To fix this, we should use parameterized queries instead of building the SQL query as a string.\n\n"
+        body += "Example of a correctly escaped query:\n"
+        body += "   ```\n"
+        body += "   query = f\"SELECT * FROM users WHERE username='?'\"\n"
+        body += "   cursor.execute(query, (username,))\n"
+        body += "   ```\n"
+
+        response = {
+            "issues": [
+                {
+                    "line_number": line_number,
+                    "title": title,
+                    "body": body
+                }
+            ]
+        }
+
+        res = make_response(response)
+        res.content_type = "Application/json"
+        return res
+
+    
 
 
 class GPTExplain(Resource):
@@ -167,6 +197,7 @@ restful.add_resource(Auth, "/login")
 restful.add_resource(Register, "/register/<token>")
 restful.add_resource(GPTExplain, "/explain/<model>")
 restful.add_resource(GPTClassify, "/classify/<model>")
+restful.add_resource(Presentation, "/presentation/<model>")
 
 api.setup()
 database.setup()
