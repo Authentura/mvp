@@ -51,6 +51,20 @@ function getCodeAroundCursor(cursorPosition: vscode.Position, targetTokenCount: 
     return selectedRange;
 }
 
+// Custom hover effect provider
+function createHoverWithButton(range: vscode.Range, highlightText: string): vscode.Hover {
+    const markdown = new vscode.MarkdownString();
+    markdown.appendText(highlightText + '\n\n');
+    markdown.appendMarkdown(
+      `[Explain Me](command:my-hover-extension.explainIssue?${encodeURIComponent(JSON.stringify({ highlightText }))})`
+    );
+    markdown.isTrusted = true;
+    
+    
+  
+    return new vscode.Hover(markdown, range);
+}
+
 // Function to clear all then reset the current diagnostics
 // function resetDiagnostics
 
@@ -99,14 +113,33 @@ function displayIssues(issues: IssueObject[]) {
             lineLength
         );
         
-        _diagnostics.push(new vscode.Diagnostic(
-            range,
-            // This is a very dirty way of storing the id of the issue,
-            //  and I am terribly sorry for whoever will have to deal with
-            //  this in the future :/
-            `${issueTitle}\n\n${issueBody}\n(ID:${ISSUES.indexOf(issue)})`,
-            vscode.DiagnosticSeverity.Information
-        ));
+        // Create a regular diagnostic
+        // _diagnostics.push(new vscode.Diagnostic(
+        //     range,
+        //     // This is a very dirty way of storing the id of the issue,
+        //     //  and I am terribly sorry for whoever will have to deal with
+        //     //  this in the future :/
+        //     `${issueTitle}\n\n${issueBody}\n(ID:${ISSUES.indexOf(issue)})`,
+        //     vscode.DiagnosticSeverity.Information
+        // ));
+        
+
+        // Custom diagnostic with explainme button in it.
+        const highlightDecorationType = vscode.window.createTextEditorDecorationType({
+
+            textDecoration: 'underline',
+            borderColor: 'rgb(0, 0, 255)',
+        });
+        vscode.window.activeTextEditor?.setDecorations(highlightDecorationType, [range]);
+    
+        const hoverProvider = vscode.languages.registerHoverProvider("*", {
+            provideHover(document, position, token): vscode.Hover {
+
+                return createHoverWithButton(range, `${issueTitle}\n\n${issueBody}\n(ID:${ISSUES.indexOf(issue)})`);
+            }
+
+        });
+        
     });
     
     // Set the new diagnostics
