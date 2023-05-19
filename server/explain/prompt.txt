@@ -2,4 +2,4 @@
 [CODE]
 ```
 A scanner identified the following vulnerability in the above code on line [LINE]: [TITLE]
-If this is truly a vulnerability then explain it, if not then write "Not vulnerable".
+Can you explain why this is a vulnerability?

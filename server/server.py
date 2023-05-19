@@ -61,6 +61,7 @@ class GPTExplain(Resource):
         cookie: str = request.cookies.get("token")
         username: str = request.get_json().get("username")
         if not auth.check_cookie(username, cookie):
+            # pass # TODO: remove this
             return "This method is only available to authenticated users", 403
 
         if model not in [
@@ -78,6 +79,7 @@ class GPTExplain(Resource):
                    " or line number (`line` int) provided.", 400
 
         response, status = api.make_request_explain(model, code, line, title, username)
+        return response, status
 
 
     

@@ -65,12 +65,12 @@ def format_response(res: str) -> list:#[dict[str,str]]:
 
     return {"issues": issues}
 
-def generate_response(prompt, model) -> str:
+def generate_response(prompt: str, model: str, tokens: int) -> str:
     """ Get the response from openai """
     response = openai.Completion.create(
         engine=model,
         prompt=prompt,
-        max_tokens=10,
+        max_tokens=tokens,
         n=1,
         stop="\n###",
         temperature=0,
@@ -93,7 +93,7 @@ def make_request_classify(model: str, code: str, username: str) -> tuple:#[dict|
     prompt += "\n\n###\n\n"
 
     # Get response
-    response = generate_response(prompt, model)
+    response = generate_response(prompt, model, 10)
     print('response: ',response , type(response))
     
     # Save request
@@ -125,7 +125,7 @@ def make_request_explain(model: str, code: str, line: int, title: str, username:
     prompt = prompt.replace("[LINE]", str(line))
     prompt = prompt.replace("[TITLE]", title)
 
-    response = generate_response(prompt, model)
+    response = generate_response(prompt, model, 2000)
     
     # Save request
     data.save_request(username, model, prompt, response)

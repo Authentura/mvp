@@ -1,7 +1,7 @@
 import { OutgoingMessage } from 'http';
 import * as vscode from 'vscode';
 import { getCodeAroundCursor } from "./tokens";
-import { displayIssues } from './customDiagnostics';
+import { displayExplanation, displayIssues } from './customDiagnostics';
 import {Line, Issue, Explanation, IssueMap, IssueObject } from "./types";
 import { isMainThread } from 'worker_threads';
 
@@ -50,8 +50,56 @@ export function activate(context: vscode.ExtensionContext) {
 
     
 
+    type TmpIssueObject = {
+        range: Array<any>,
+        title: Issue,
+        body: Explanation,
+        code: string
+        rejected: boolean
+    };
+
 
     // NOTE: place for other commands in the future
+    let explainCommand = vscode.commands.registerCommand("authentura-mvp.explain", (params: TmpIssueObject) => {
+        vscode.window.showInformationMessage("Explanation called");
+
+        // These few lines are needed to fix the issueObject after it got stringified
+        let { range , title, code, rejected } = params;
+        let newRange = new vscode.Range(
+            range[0].line,
+            range[0].character,
+            range[1].line,
+            range[1].character,
+        );
+        const issueObject: IssueObject = {
+            range: newRange,
+            title,
+            code,
+            body: "",
+            rejected
+        };
+        
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showInformationMessage("No active editor!");
+            return;
+        }
+        import("./modules/gpt-explain").then((module) => {
+            module.run(
+                issueObject,
+                outputLogger,
+                editor
+            )
+            .then((issue) => {
+                vscode.window.showInformationMessage(issue.body);;
+                displayExplanation(issueObject, editor, context);
+            })
+            .catch((error) => {
+                outputLogger.append("Error while makeing api request: "+ error);
+            });
+        });
+    });
+    context.subscriptions.push(explainCommand);
 
 
     

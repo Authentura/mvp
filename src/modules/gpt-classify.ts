@@ -1,9 +1,6 @@
 import * as vscode from "vscode";
-import { promisify } from 'util';
 import * as request from "request";
 import {Line, Issue, Explanation, IssueMap, IssueObject } from "../types";
-import { isSubdirectory } from "@vscode/test-electron/out/util";
-import { start } from "repl";
 
 
 const MODEL = 'curie:ft-personal-2023-04-12-13-08-55';
@@ -69,9 +66,9 @@ export const run = (
                     
                     // GPT can sometimes mess up which line it actually means. We need to make
                     // sure that the line it gives is both valid and not empty
-                    if (!lineText) {
-                        reject("The server responded with an invalid line number!");
-                    }
+                    //if (!lineText) {
+                    //    reject("The server responded with an invalid line number!");
+                    //}
                     let i = 0;
                     // If the line gpt gives is basically empty, then try a couple lines above it
                     while (lineText.length -1 < 2) {
@@ -95,7 +92,8 @@ export const run = (
                         range: range,
                         title: issue.title,
                         body: "",
-                        code: codeBody
+                        code: codeBody,
+                        rejected: false
                     };
                     
                     issues.push(issueObject);

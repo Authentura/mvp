@@ -12,4 +12,6 @@ export type IssueObject = {
     body: Explanation, // explanation
     code: string // original code that the issue was found in
                  //   this last one is useful for generating explanations
+    rejected: boolean // Default false, set to true if the GPT explain
+                      // module classified it as a false positive.
 };
