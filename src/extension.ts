@@ -70,7 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
         rejected: boolean
     };
     let explainCommand = vscode.commands.registerCommand("authentura-mvp.explain", (params: TmpIssueObject) => {
-        vscode.window.showInformationMessage("Explanation called");
+        vscode.window.showInformationMessage("Please wait while the explanation is being generated...");
 
         // These few lines are needed to fix the issueObject after it got stringified
         let { range , title, code, rejected } = params;
@@ -100,8 +100,8 @@ export function activate(context: vscode.ExtensionContext) {
                 editor
             )
             .then((issue) => {
-                vscode.window.showInformationMessage(issue.body);;
-                displayExplanation(issueObject, editor, context);
+                vscode.window.showInformationMessage("Explanation ready: " + issue.body);
+                displayExplanation(issue, editor, context);
             })
             .catch((error) => {
                 outputLogger.append("Error while makeing api request: "+ error);
@@ -157,6 +157,7 @@ export function activate(context: vscode.ExtensionContext) {
         authenguardToggle.command = "authentura-mvp.onoff";
         authenguardToggle.text = "Authenguard is off";
         authenguardToggle.show();
+        // TODO: call the clearn function (when its been implemented)
     }
 }
 
