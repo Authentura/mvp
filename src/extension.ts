@@ -136,6 +136,7 @@ export function activate(context: vscode.ExtensionContext) {
         if (!authenguardStatus) {
             authenguardToggle.text = "Authenguard active! Stay safe";
             authenguardStatus = true;
+            vscode.commands.executeCommand("authentura-mvp.scan");
         }
         else {
             authenguardToggle.text = "Authenguard is off";
