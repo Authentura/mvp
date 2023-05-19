@@ -8,6 +8,8 @@ import { isMainThread } from 'worker_threads';
 
 // Some global variables
 let isManualSave = false;
+let authenguardStatus: boolean = false;
+let authenguardToggle: vscode.StatusBarItem;
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -50,6 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     
 
+    // ------------> The explain command
     type TmpIssueObject = {
         range: Array<any>,
         title: Issue,
@@ -57,9 +60,6 @@ export function activate(context: vscode.ExtensionContext) {
         code: string
         rejected: boolean
     };
-
-
-    // NOTE: place for other commands in the future
     let explainCommand = vscode.commands.registerCommand("authentura-mvp.explain", (params: TmpIssueObject) => {
         vscode.window.showInformationMessage("Explanation called");
 
@@ -114,7 +114,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Set up the on save listener
     context.subscriptions.push(
         vscode.workspace.onDidSaveTextDocument(async (document: vscode.TextDocument) => {
-            if (isManualSave) {
+            if (isManualSave && authenguardStatus) {
                 try {
                     // Execute the authentura-mvp.scan command
                     await vscode.commands.executeCommand('authentura-mvp.scan');
@@ -127,6 +127,27 @@ export function activate(context: vscode.ExtensionContext) {
             isManualSave = false;
         })
     );
+    
+
+
+    // ------------> Status bar toggle
+    let toggleCommand = vscode.commands.registerCommand("authentura-mvp.onoff", (params: TmpIssueObject) => {
+
+        if (!authenguardStatus) {
+            authenguardToggle.text = "Authenguard active! Stay safe";
+            authenguardStatus = true;
+        }
+        else {
+            authenguardToggle.text = "Authenguard is off";
+            authenguardStatus = false;
+        }
+    });
+    authenguardToggle = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+    if (authenguardToggle) {
+        authenguardToggle.command = "authentura-mvp.onoff";
+        authenguardToggle.text = "Authenguard is off";
+        authenguardToggle.show();
+    }
 }
 
 export function deactivate() {}
