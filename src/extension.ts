@@ -17,7 +17,6 @@ export function activate(context: vscode.ExtensionContext) {
     const outputLogger = vscode.window.createOutputChannel("authentura-mvp");
     context.subscriptions.push(outputLogger);
     outputLogger.show(true);
-    outputLogger.appendLine("Authenguard is active!");
     
     // ------------> Scan command
     // Command runs the authenguard scanner on the current position of the cursor
@@ -157,7 +156,7 @@ export function activate(context: vscode.ExtensionContext) {
         authenguardToggle.command = "authentura-mvp.onoff";
         authenguardToggle.text = "Authenguard is off";
         authenguardToggle.show();
-        // TODO: call the clearn function (when its been implemented)
+        // TODO: call the clear function (when its been implemented)
     }
 }
 
