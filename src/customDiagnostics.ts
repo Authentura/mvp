@@ -24,6 +24,7 @@ function createExplainHover(range: vscode.Range, message: string, issue: IssueOb
 
 export function displayIssues(issues: IssueObject[], editor: vscode.TextEditor, context: vscode.ExtensionContext) {
     const document = editor.document;
+    const decorations: vscode.Disposable[] = [];
     const decorationInstances: vscode.TextEditorDecorationType[] = [];
 
     issues.forEach((issue) => {
@@ -47,7 +48,8 @@ export function displayIssues(issues: IssueObject[], editor: vscode.TextEditor, 
         });
         
         // Add to an array so the event listeners can be added to it
-        decorationInstances.push(highlightDecorationType);
+        decorations.push(hoverProvider);
+        decorations.push(highlightDecorationType);
 
         // Make sure the diagnostics get removed
         context.subscriptions.push(hoverProvider);
@@ -59,9 +61,9 @@ export function displayIssues(issues: IssueObject[], editor: vscode.TextEditor, 
     // NOTE: if there is an issue around multiple errors being removed when
     //       only one should be in the future, then its this things fault.
     vscode.window.onDidChangeTextEditorSelection(() => {
-        decorationInstances.forEach((decorationInstance) => {
-            editor.setDecorations(decorationInstance, []);
-            decorationInstance.dispose();
+        decorations.forEach((decoration) => {
+            // editor.setDecorations(decoration, []);
+            decoration.dispose();
         });
     });
 

@@ -18,8 +18,8 @@
         "title": "Authentura MVP: Scan for potential vulnerabilities"
       },
       {
-        "command": "authentura-mvp.clear",
-        "title": "Authentura MVP: Clear potential vulnerabilities"
+        "command": "authentura-mvp.onoff",
+        "title": "Toggle the authenguard exntesion"
       }
     ],
     "configuration": {
