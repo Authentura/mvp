@@ -32,7 +32,16 @@ export function activate(context: vscode.ExtensionContext) {
         
         // Load the GPT module
         // Get an appropriate amount of code around the cursor for the GPT context size
-        const codeRange = getCodeAroundCursor(editor.selection.active, 500);
+        let codeRange: vscode.Range;
+        try {
+            codeRange = getCodeAroundCursor(editor.selection.active, 500);
+        }
+        catch {
+            // If the cursor is not active, then just start from the beginning
+            codeRange = getCodeAroundCursor(new vscode.Position(0, 0), 1000);
+        }
+
+
         import("./modules/gpt-classify").then((module) => {
             module.run(
                 codeRange,

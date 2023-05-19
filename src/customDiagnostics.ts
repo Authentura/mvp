@@ -58,8 +58,6 @@ export function displayIssues(issues: IssueObject[], editor: vscode.TextEditor, 
     
     // Create an eventlistener that removes all the highlights if they are
     // no longer needed
-    // NOTE: if there is an issue around multiple errors being removed when
-    //       only one should be in the future, then its this things fault.
     vscode.window.onDidChangeTextEditorSelection(() => {
         decorations.forEach((decoration) => {
             // editor.setDecorations(decoration, []);
