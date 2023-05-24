@@ -7,7 +7,7 @@ function createHoverWithButton(range: vscode.Range, message: string, issue: Issu
     markdown.appendMarkdown(`<span style="font-size: 20px;">${message}</span>\n\n`); // Adjust the font-size value as desired
     markdown.appendMarkdown(
         // TODO: replace this with the correct command
-      `[Explain Me](command:authentura-mvp.explain?${encodeURIComponent(JSON.stringify(issue))})`
+      `[Explain Me](command:authenguard.explain?${encodeURIComponent(JSON.stringify(issue))})`
     );
     markdown.isTrusted = true;
     return new vscode.Hover(markdown, range);

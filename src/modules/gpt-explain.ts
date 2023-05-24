@@ -23,7 +23,7 @@ export const run = (
     return new Promise((resolve, reject) => {
 
         // Get the username and the token from configuration
-        const configuration = vscode.workspace.getConfiguration('authenturaMvp');
+        const configuration = vscode.workspace.getConfiguration('authenguard');
         const settingsUsername: string = configuration.get('username') || "";
         const settingsToken: string = configuration.get('token') || "";
         if (settingsUsername === "" || settingsToken === "") {

@@ -14,13 +14,13 @@ let authenguardToggle: vscode.StatusBarItem;
 
 export function activate(context: vscode.ExtensionContext) {
     // Set up the logger
-    const outputLogger = vscode.window.createOutputChannel("authentura-mvp");
+    const outputLogger = vscode.window.createOutputChannel("authenguard");
     context.subscriptions.push(outputLogger);
     outputLogger.show(true);
     
     // ------------> Scan command
     // Command runs the authenguard scanner on the current position of the cursor
-    let scanCommand = vscode.commands.registerCommand('authentura-mvp.scan', () => {
+    let scanCommand = vscode.commands.registerCommand('authenguard.scan', () => {
         // Ignore if there is no open editor
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
@@ -68,7 +68,7 @@ export function activate(context: vscode.ExtensionContext) {
         code: string
         rejected: boolean
     };
-    let explainCommand = vscode.commands.registerCommand("authentura-mvp.explain", (params: TmpIssueObject) => {
+    let explainCommand = vscode.commands.registerCommand("authenguard.explain", (params: TmpIssueObject) => {
         vscode.window.showInformationMessage("Please wait while the explanation is being generated...");
 
         // These few lines are needed to fix the issueObject after it got stringified
@@ -124,8 +124,8 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.workspace.onDidSaveTextDocument(async (document: vscode.TextDocument) => {
             if (isManualSave && authenguardStatus) {
                 try {
-                    // Execute the authentura-mvp.scan command
-                    await vscode.commands.executeCommand('authentura-mvp.scan');
+                    // Execute the authenguard.scan command
+                    await vscode.commands.executeCommand('authenguard.scan');
                 } catch (error) {
                     const errorMsg = (error as Error).message;
                     vscode.window.showErrorMessage(`Failed to execute command: ${errorMsg}`);
@@ -139,12 +139,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 
     // ------------> Status bar toggle
-    let toggleCommand = vscode.commands.registerCommand("authentura-mvp.onoff", (params: TmpIssueObject) => {
+    let toggleCommand = vscode.commands.registerCommand("authenguard.onoff", (params: TmpIssueObject) => {
 
         if (!authenguardStatus) {
             authenguardToggle.text = "Authenguard active! Stay safe";
             authenguardStatus = true;
-            vscode.commands.executeCommand("authentura-mvp.scan");
+            vscode.commands.executeCommand("authenguard.scan");
         }
         else {
             authenguardToggle.text = "Authenguard is off";
@@ -153,7 +153,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
     authenguardToggle = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     if (authenguardToggle) {
-        authenguardToggle.command = "authentura-mvp.onoff";
+        authenguardToggle.command = "authenguard.onoff";
         authenguardToggle.text = "Authenguard is off";
         authenguardToggle.show();
         // TODO: call the clear function (when its been implemented)
