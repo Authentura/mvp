@@ -87,7 +87,7 @@ To address these, we assure you that:
 
 **Firstly**, all data sent to OpenAI or used for training our model is fully anonymized. Only the code itself and our model's response are stored.
 
-**Secondly**, we're working on a mechanism to automatically redact any sensitive or identifiable information from code, including names, hard-coded passwords, API keys, and so forth. This mechanism will operate either locally on your machine or on our servers before any data gets saved or sent to OpenAI. While **this feature is not yet active, it should be soon**. If this is a major concern for you, feel free to add your email to [this form]() where we'll notify you once our model is operational.
+**Secondly**, we're working on a mechanism to automatically redact any sensitive or identifiable information from code, including names, hard-coded passwords, API keys, and so forth. This mechanism will operate either locally on your machine or on our servers before any data gets saved or sent to OpenAI. While **this feature is not yet active, it should be soon**. If this is a major concern for you, feel free to add your email to [this form](https://forms.office.com/Pages/ResponsePage.aspx?id=AtzyDUXV30OsSvs76idkrGRPDdQgCeFKrcOZX0BBG-9UNkw1M01CNTU1QllUSk9SWTY4VUw2N1dMVy4u) where we'll notify you once our model is operational.
 
 **Lastly**, in later stages of testing and deployment, we will provide privacy-centric tiers that ensure we do not store or train on any of your data.
 
