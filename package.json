@@ -1,7 +1,7 @@
 {
   "name": "authenguard",
-  "displayName": "authenguard",
-  "description": "",
+  "displayName": "Authenguard",
+  "description": "Authenguard delivers real-time vulnerability detection in your code, along with easy to understand explanations and fixes.",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.76.0"
