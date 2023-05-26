@@ -44,6 +44,7 @@ Once your login info is good to go, you can start using Authenguard.
 When Authenguard is on, it checks the code near your cursor for vulnerabilities every time you save a file. It works with all programming languages, but it's best with popular ones because of the data it was trained on.
 
 To turn Authenguard on or off, click the Authenguard button at the bottom of your screen.
+
 ![Image of Authenguard toggle button](https://mvp.authentura.co.uk/static/authenguard-button.png)
 
 **Heads up:** Using the extension with non security related tasks (like design work, simple scripts, etc) can cause a higher number of false positives. These can be annoying, so we recommend you only turn the extension on when you think you might need it!
