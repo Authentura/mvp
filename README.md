@@ -1,11 +1,8 @@
-
-
 # Authenguard VS Code Extension
-
 
 Authenguard delivers real-time vulnerability detection in your code. As you write your code, this extension not only identifies vulnerabilities but also provides context-aware explanations of the vulnerabilities and suggests fixes. With a dual purpose of enhancing code security and educating about security best practices, Authenguard aims to become your constant coding and security companion.
 
-![[./readme-assets/early-animated.gif]]
+![Animated GIF of authenguard working](https://mvp.authentura.co.uk/static/early-animated.gif)
 
 
 **NOTE:** [To gain access to the early beta you have to join our waitlist.](https://forms.office.com/Pages/ResponsePage.aspx?id=AtzyDUXV30OsSvs76idkrFYzqS-SJ8tCv1gOL4GgWU1UNFlPUEdCTk01RFFIVkhBUzlBVE5HRldCUy4u)
@@ -34,7 +31,7 @@ Authenguard delivers real-time vulnerability detection in your code. As you writ
 When you're approved on the waitlist, we'll send you a link to a sign-up form. The link will look like this: `https://mvp.authentura.co.uk/register/<token>`.
 
 After you sign up, we'll give you an API token. Put this token and your username into the extension settings to start using the extension.
-![[./readme-assets/settings_image.png]]
+![Image of Authenguard settings](https://mvp.authentura.co.uk/static/settings_image.png)
 
 Once your login info is good to go, you can start using Authenguard.
 
@@ -47,7 +44,7 @@ Once your login info is good to go, you can start using Authenguard.
 When Authenguard is on, it checks the code near your cursor for vulnerabilities every time you save a file. It works with all programming languages, but it's best with popular ones because of the data it was trained on.
 
 To turn Authenguard on or off, click the Authenguard button at the bottom of your screen.
-![[./readme-assets/authenguard-button.png]]
+![Image of Authenguard toggle button](https://mvp.authentura.co.uk/static/authenguard-button.png)
 
 **Heads up:** Using the extension with non security related tasks (like design work, simple scripts, etc) can cause a higher number of false positives. These can be annoying, so we recommend you only turn the extension on when you think you might need it!
 (We are currently working on fixing this issue)
