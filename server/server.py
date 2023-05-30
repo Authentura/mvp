@@ -5,6 +5,7 @@ import database
 
 from flask import Flask
 from flask import request
+from flask import send_file
 from flask import make_response
 from flask import render_template
 from flask_restful import Api, Resource
@@ -161,11 +162,49 @@ class Register(Resource):
         return auth.authenticate(username, password)
         
         
+
+class DownloadDatabase(Resource):
+    @staticmethod
+    def post():
+        """ Allow an admin to download the database """
+
+        # Ask for username and password again
+        if request.headers.get("Content-Type").lower() == "application/json":
+            username: str = request.get_json().get("username")
+            password: str = request.get_json().get("password")
+        else:
+            username: str = request.form.get("username")
+            password: str = request.form.get("password")
+
+        if username is None or password is None:
+            return "No username or password supplied", 400
+        
+        if username != "admin":
+            return "This method is only for admin users", 403
+
+        _, success = auth.authenticate(username, password)
+        if success != 200:
+            return "Invalid username or password", 401
+        
+        return send_file("./database.db", as_attachment=True)
+    
+
+    @staticmethod
+    def get():
+        """Show webpage for downloading the database"""
+        res = make_response(render_template("adminLogin.html"))
+        res.status_code = 200
+        res.content_type = "Text/HTML"
+        return res
+        
+
+
         
 
 
 
 restful.add_resource(Auth, "/login")
+restful.add_resource(DownloadDatabase, "/admindb")
 restful.add_resource(Register, "/register/<token>")
 restful.add_resource(GPTExplain, "/explain/<model>")
 restful.add_resource(GPTClassify, "/classify/<model>")
