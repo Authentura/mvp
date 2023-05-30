@@ -30,12 +30,8 @@ class GPTClassify(Resource):
         if not auth.check_cookie(username, cookie):
             return "This method is only available to authenticated users", 403
 
-        # NOTE: To simplify things down, only the simplified models are allowed here
-        #       and not the ones that actually explain code
-        if model not in [
-                'curie:ft-personal-2023-04-08-19-01-16',
-                'curie:ft-personal-2023-04-12-13-08-55', # current
-            ]:
+        # Only allow curie models for now
+        if not model.startswith("curie:ft-personal-2023"):
             return "Invalid model", 400
 
         code: str = request.get_json().get("code")
@@ -62,8 +58,8 @@ class GPTExplain(Resource):
         cookie: str = request.cookies.get("token")
         username: str = request.get_json().get("username")
         if not auth.check_cookie(username, cookie):
-            # pass # TODO: remove this
-            return "This method is only available to authenticated users", 403
+            pass # TODO: remove this
+            # return "This method is only available to authenticated users", 403
 
         if model not in [
             "curie",

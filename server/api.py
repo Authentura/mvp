@@ -134,5 +134,6 @@ def make_request_explain(model: str, code: str, line: int, title: str, username:
         "explanation": response,
         "vulnerable": (False if response.upper().startswith("NOT VULNERABLE") else True)
       }
+    print(response_json['vulnerable'], response)
 
     return response_json, 200

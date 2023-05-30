@@ -3,7 +3,7 @@ import * as request from "request";
 import {Line, Issue, Explanation, IssueMap, IssueObject } from "../types";
 
 
-const MODEL = 'curie:ft-personal-2023-04-12-13-08-55';
+const MODEL = 'curie:ft-personal-2023-05-30-11-28-42';
 const SERVER = "https://mvp.authentura.co.uk/classify/";
 //const SERVER = "http://localhost:3000/classify/";
 
