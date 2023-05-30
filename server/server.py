@@ -58,8 +58,8 @@ class GPTExplain(Resource):
         cookie: str = request.cookies.get("token")
         username: str = request.get_json().get("username")
         if not auth.check_cookie(username, cookie):
-            pass # TODO: remove this
-            # return "This method is only available to authenticated users", 403
+            # pass # TODO: remove this
+            return "This method is only available to authenticated users", 403
 
         if model not in [
             "curie",

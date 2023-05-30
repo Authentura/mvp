@@ -9,8 +9,8 @@ import { resolve } from "path";
 // this to a fine-tuned model depending on the
 // cost and accuracy.
 const MODEL = 'text-davinci-003';
-//const SERVER = "https://mvp.authentura.co.uk/explain/";
-const SERVER = "http://localhost:3000/explain/";
+const SERVER = "https://mvp.authentura.co.uk/explain/";
+//const SERVER = "http://localhost:3000/explain/";
 
 
 
