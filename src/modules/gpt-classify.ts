@@ -74,7 +74,7 @@ export const run = (
                     while (lineText.length -1 < 2) {
                         i ++;
                         lineNumber = lineNumber -i;
-                        lineText = editor.document.lineAt(lineNumber-i).text;
+                        lineText = editor.document.lineAt(lineNumber).text;
                         if (i > 3) {
                             reject(`Server responded with a line that could not be handled. (Line: ${lineNumber})`);
                             
