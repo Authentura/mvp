@@ -42,7 +42,7 @@ export function displayIssues(issues: IssueObject[], editor: vscode.TextEditor, 
         // Create the highlight message
         editor.setDecorations(highlightDecorationType, [range]);
         const hoverProvider = vscode.languages.registerHoverProvider("*", {
-            provideHover(_document, position , _token): vscode.Hover {
+            provideHover(_document, position , _token): vscode.Hover | undefined {
                 if (range.contains(position)) {
                     return createHoverWithButton(range, issueTitle, issue);
                 }

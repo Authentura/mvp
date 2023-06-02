@@ -1,3 +1,6 @@
+# Fri, 02, June 2023
+
+Bug Fix: The hover provider on issues was applied to the whole document instead of just where the issue is. This is now fixed.
 
 # Tue, 30th May 2023
 
