@@ -3,7 +3,7 @@
   "publisher": "Authentura",
   "displayName": "Authenguard",
   "description": "Authenguard delivers real-time vulnerability detection in your code, along with easy to understand explanations and fixes.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.76.0"
   },
