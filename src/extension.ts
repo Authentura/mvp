@@ -1,9 +1,10 @@
 import { OutgoingMessage } from 'http';
 import * as vscode from 'vscode';
 import { getCodeAroundCursor } from "./tokens";
-import { displayExplanation, displayIssues } from './customDiagnostics';
+import { displayExplanation, displayIssues, clearIssues } from './customDiagnostics';
 import {Line, Issue, Explanation, IssueMap, IssueObject } from "./types";
 import { isMainThread } from 'worker_threads';
+import { clear } from 'console';
 
 
 // Some global variables
@@ -21,6 +22,9 @@ export function activate(context: vscode.ExtensionContext) {
     // ------------> Scan command
     // Command runs the authenguard scanner on the current position of the cursor
     let scanCommand = vscode.commands.registerCommand('authenguard.scan', () => {
+        // remove any previous issues
+        clearIssues();
+
         // Ignore if there is no open editor
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
@@ -41,6 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
 
+        // TODO: remove colliding issues from different scanners
         import("./modules/gpt-classify").then((module) => {
             module.run(
                 codeRange,
@@ -54,6 +59,28 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.window.showErrorMessage("Error while makeing api request: ", error);
             });
         });
+        
+        // Run any python specific scanners
+        if (editor.document.languageId === "python") {
+            const filepath = editor.document.fileName;
+            
+            import("./modules/python-bandit").then((module) => {
+                module.run(
+                    filepath,
+                    outputLogger,
+                    editor
+                )
+                .then((issues) => {
+                    displayIssues(issues, editor, context);
+                })
+                .catch((error) => {
+                    // At the current moment, there is no user friendly way of getting bandit installed,
+                    // for this reason id rather not show error messages if it is not installed as it could
+                    // annoy the user.
+                    //vscode.window.showErrorMessage("Failed to execute the python scanner: ", error);
+                });
+            });
+        }
     });
     context.subscriptions.push(scanCommand);
     

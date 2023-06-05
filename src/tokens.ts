@@ -4,6 +4,7 @@ function simpleTokenizer(code: string): string[] {
     const regex = /[\w]+|[^\s\w]+/g;
     return code.match(regex) || [];
 }
+// todod rename to get code around position
 
 // fucntion tries to get x amount of tokens from above and below the cursor.
 // This is needed due to the token limit of gpt models.
