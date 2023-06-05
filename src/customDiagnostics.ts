@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import {Line, Issue, Explanation, IssueMap, IssueObject } from "./types";
 
+let decorations: vscode.Disposable[] = [];
 
 function createHoverWithButton(range: vscode.Range, message: string, issue: IssueObject): vscode.Hover {
     const markdown = new vscode.MarkdownString();
@@ -20,11 +21,14 @@ function createExplainHover(range: vscode.Range, message: string, issue: IssueOb
     return new vscode.Hover(markdown, range);
 }
 
+export function clearIssues() {
+    decorations.forEach(decoration => decoration.dispose());
+    decorations = [];
+}
 
 
 export function displayIssues(issues: IssueObject[], editor: vscode.TextEditor, context: vscode.ExtensionContext) {
     const document = editor.document;
-    const decorations: vscode.Disposable[] = [];
     const decorationInstances: vscode.TextEditorDecorationType[] = [];
 
     issues.forEach((issue) => {
@@ -48,6 +52,7 @@ export function displayIssues(issues: IssueObject[], editor: vscode.TextEditor, 
                 }
             }
         });
+
         
         // Add to an array so the event listeners can be added to it
         decorations.push(hoverProvider);
@@ -57,19 +62,16 @@ export function displayIssues(issues: IssueObject[], editor: vscode.TextEditor, 
         context.subscriptions.push(hoverProvider);
         context.subscriptions.push(highlightDecorationType);
     });
-    
-    // Create an eventlistener that removes all the highlights if they are
-    // no longer needed
-    vscode.window.onDidChangeTextEditorSelection(() => {
-        decorations.forEach((decoration) => {
-            // editor.setDecorations(decoration, []);
-            decoration.dispose();
-        });
+
+    // Clear issues when the document changes
+    vscode.workspace.onDidOpenTextDocument(() => {
+        clearIssues();
     });
 
-
-    // TODO: maybe return an array with both the issue and the diagnostics
-    //       so later it can be deleted if the user says presses ignore
+    // Clear issues when the editor changes
+    vscode.window.onDidChangeActiveTextEditor(() => {
+        clearIssues();
+    });
 };
 
 
@@ -83,8 +85,10 @@ export function displayExplanation(issue: IssueObject, editor: vscode.TextEditor
     
     // Create the highlight message
     const hoverProvider = vscode.languages.registerHoverProvider("*", {
-        provideHover(_document, _position , _token): vscode.Hover {
-            return createExplainHover(range, issueBody, issue);
+        provideHover(_document, position , _token): vscode.Hover | undefined {
+            if (range.contains(position)) {
+                return createExplainHover(range, issueBody, issue);
+            }
         }
     });
     
