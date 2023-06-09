@@ -1,29 +1,16 @@
-{% extends "base.html" %}
+{% extends "loginPrompt.html" %}
 
-{% block title %}Login{% endblock %}
+{% block login_title %}Login{% endblock %}
 
-{% block content %}
+{% block login_prompt_message %}
+Login to get a new access token
+{% endblock %}
 
-<div id="wrapper">
-  <div id="formContainer">
-    <h1 id="titleMessage">Login to get a new access token</h1>
-    <div id="errorContainer"></div>
-    <form id="registrationForm" method="POST">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required />
-
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required />
-
-      <button type="submit">Login</button>
-    </form>
-  </div>
-</div>
+{% block form_handler %}
 <template id="tokenTemplate">
   <div>
     <p>Your token for using the extension:</p>
     <input type="text" id="token" style="min-width: 40ch" readonly />
-    <!-- <button id="copyButton">Copy to clipboard</button> -->
 
     <p>
       In order to make the extension work, set this token<br />
@@ -67,9 +54,12 @@
         errorContainer.nextSibling
       );
     } else {
-      const errorMessage = await response.text();
+      let errorMessage = await response.text();
       const error = document.createElement("p");
       error.classList.add("error");
+
+      errorMessage = errorMessage.replaceAll("\"", "");
+
       error.textContent = errorMessage;
       errorContainer.appendChild(error);
     }

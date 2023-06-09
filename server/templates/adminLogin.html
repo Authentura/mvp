@@ -1,21 +1,7 @@
-{% extends "base.html" %}
+{% extends "loginPrompt.html" %}
 
-{% block title %}Admin Login{% endblock %}
+{% block login_title %}Admin Login{% endblock %}
 
-{% block content %}
-<div id="wrapper">
-  <div id="formContainer">
-    <h1 id="titleMessage">Login as admin!</h1>
-    <div id="errorContainer"></div>
-    <form id="registrationForm" method="POST">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required />
-
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required />
-
-      <button type="submit">Login</button>
-    </form>
-  </div>
-</div>
+{% block login_prompt_message %}
+Log in as admin!
 {% endblock %}
