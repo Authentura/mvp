@@ -2,4 +2,4 @@
 [CODE]
 ```
 A scanner identified the following vulnerability in the above code on line [LINE]: [TITLE]
-Can you explain why this is a vulnerability?
+Can you explain why this is a vulnerability? Can you provide correct code to fix it?

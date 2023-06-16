@@ -5,7 +5,7 @@ let decorations: vscode.Disposable[] = [];
 
 function createHoverWithButton(range: vscode.Range, message: string, issue: IssueObject): vscode.Hover {
     const markdown = new vscode.MarkdownString();
-    markdown.appendMarkdown(`<span style="font-size: 20px;">${message}</span>\n\n`); // Adjust the font-size value as desired
+    markdown.appendMarkdown(`<span style="font-size: 20px;">${message}</span>\n\n`); // Adjust the font-size value as desired/div><>
     markdown.appendMarkdown(
         // TODO: replace this with the correct command
       `[Explain Me](command:authenguard.explain?${encodeURIComponent(JSON.stringify(issue))})`

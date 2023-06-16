@@ -8,9 +8,10 @@ import { resolve } from "path";
 // get the explenations. We might want to change
 // this to a fine-tuned model depending on the
 // cost and accuracy.
-const MODEL = 'text-davinci-003';
-const SERVER = "https://mvp.authentura.co.uk/explain/";
-//const SERVER = "http://localhost:3000/explain/";
+//const MODEL = 'text-davinci-003';
+const MODEL = 'gpt-3.5-turbo-16k';
+//const SERVER = "https://mvp.authentura.co.uk/explain/";
+const SERVER = "http://localhost:3000/explain/";
 
 
 

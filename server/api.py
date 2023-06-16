@@ -3,6 +3,7 @@ import re
 import json
 import data
 import openai
+import prompt_chat
 
 
 def setup():
@@ -78,6 +79,15 @@ def generate_response(prompt: str, model: str, tokens: int) -> str:
 
     return response.choices[0].text.strip()
 
+def generate_response_chat(messages: list, model: str) -> str:
+    """ Get a completion from the openai chat module """
+    response = openai.ChatCompletion.create(
+        model=model,
+        messages=messages
+    )
+
+    return response.choices[0].message.content
+
 
 def make_request_classify(model: str, code: str, username: str) -> tuple:#[dict|int]:
     """ Make a request to our vulnerability classify model """
@@ -108,30 +118,26 @@ def make_request_classify(model: str, code: str, username: str) -> tuple:#[dict|
 
 
 
-def make_request_explain(model: str, code: str, line: int, title: str, username: str) -> tuple:#[dict|int]:
+def make_request_explain(model: str, code: str, line_num: int, title: str, username: str) -> tuple:#[dict|int]:
     """ Make a request to the openai api to explain a vulnerability """
     # Add line numbers to code
     # GPT cannot count, if we want line numbers we have to add it ourselves
     code_with_numbers = ""
     for i, line in enumerate(code.split("\n")):
         code_with_numbers += f"{i+1:>5}| {line}\n"
-    print('code_with_numbers: ',code_with_numbers , type(code_with_numbers))
 
+    prompt = prompt_chat.generate_prompt(code, line, title)
 
-    with open("./explain/prompt.txt", "r", encoding="utf-8")as infile:
-        prompt = infile.read()
-
-    prompt = prompt.replace("[CODE]", code_with_numbers)
-    prompt = prompt.replace("[LINE]", str(line))
-    prompt = prompt.replace("[TITLE]", title)
-
-    response = generate_response(prompt, model, 2000)
+    response = generate_response_chat(prompt, model)
     
     # Save request
-    data.save_request(username, model, prompt, response)
+    data.save_request(username, model, json.dumps(prompt), response)
 
     response_json = {
         "explanation": response,
+        # This is currently not in use,
+        # but at some point we might use the explain module to also double
+        # check if the detection is not a false positive
         "vulnerable": (False if response.upper().startswith("NOT VULNERABLE") else True)
       }
     print(response_json['vulnerable'], response)

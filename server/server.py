@@ -62,8 +62,10 @@ class GPTExplain(Resource):
             return "This method is only available to authenticated users", 403
 
         if model not in [
-            "curie",
-            "text-davinci-003"
+            #"curie",
+            #"text-davinci-003"
+            "gpt-3.5-turbo",
+            "gpt-3.5-turbo-16k",
             ]:
             return "Invalid model", 400
 
