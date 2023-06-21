@@ -10,8 +10,8 @@ import { resolve } from "path";
 // cost and accuracy.
 //const MODEL = 'text-davinci-003';
 const MODEL = 'gpt-3.5-turbo-16k';
-//const SERVER = "https://mvp.authentura.co.uk/explain/";
-const SERVER = "http://localhost:3000/explain/";
+const SERVER = "https://mvp.authentura.co.uk/explain/";
+//const SERVER = "http://localhost:3000/explain/";
 
 
 

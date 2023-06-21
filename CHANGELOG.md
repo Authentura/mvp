@@ -1,3 +1,9 @@
+# Wed, 21, June 2023
+
+Bug fix
+
+Explain module was not working properly
+
 # Fri, 16th, June 2023
 
 Greatly improved explanations of vulnerabilities.
