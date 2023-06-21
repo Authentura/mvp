@@ -1,3 +1,11 @@
+# Fri, 16th, June 2023
+
+Greatly improved explanations of vulnerabilities.
+
+Instead of a short, mostly useless paragraph, explanations now go in detail about why the code you wrote is vulnerable. In addition, they provide you with an example correct code snippet of how you could write your code more securely.
+
+There are also colours now :)
+
 # Mon, 3rd, June 2023
 
 ### Static scanners!
