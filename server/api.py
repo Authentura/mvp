@@ -126,7 +126,7 @@ def make_request_explain(model: str, code: str, line_num: int, title: str, usern
     for i, line in enumerate(code.split("\n")):
         code_with_numbers += f"{i+1:>5}| {line}\n"
 
-    prompt = prompt_chat.generate_prompt(code, line, title)
+    prompt = prompt_chat.generate_prompt(code, line_num, title)
 
     response = generate_response_chat(prompt, model)
     
