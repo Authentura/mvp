@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = Flask(__name__, static_folder="../static/")
+app = Flask(__name__, static_folder="./static/")
 restful = Api(app)
 
 
